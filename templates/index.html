@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Web新闻发布系统</title>
+{% endblock %}
+{% block css %}
+    <style>
+        .golden-ratio-img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1.618 / 1;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {% for article in page_obj %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a href="{% url 'article:read' article.id %}"><strong>{{ article.title }}</strong></a>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4" style="border-right: 1px solid #ddd;">
+                                <img src="{{ article.cover.url }}" class="img-responsive golden-ratio-img"
+                                     alt="{{ article.title }}">
+                            </div>
+                            <div class="col-md-4" style="border-right: 1px solid #ddd;">
+                                <p>作者：{{ article.author }}</p>
+                                <p>发布时间：{{ article.created_at }}</p>
+                                <p>类别：{{ article.category.name }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>{{ article.desc|slice:":100" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li>
+                            <a href="?page=1{% if query %}&q={{ query }}{% endif %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </li>
+                        <li class="disabled">
+                            <span aria-hidden="true">&laquo;</span>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="active"><span>{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li><a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li>
+                            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}"
+                               aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled">
+                            <span aria-hidden="true">&raquo;</span>
+                        </li>
+                        <li class="disabled">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">搜索文章</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="get" action="{% url 'main:index' %}">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="搜索文章" value="{{ query }}">
+                            <span class="input-group-btn">
+                            <button class="btn btn-success" type="submit">搜索</button>
+                        </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">文章类别</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {% for category in categories %}
+                            <li class="list-group-item">
+                                <a href="{% url 'main:index' %}?category={{ category.id }}">{{ category.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

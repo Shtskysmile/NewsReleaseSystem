@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{ article.title }}</title>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.btn-danger').click(function () {
+            return confirm('确定删除吗？');
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">{{ article.title }}</h1>
+        </div>
+        <div class="panel-body">
+            {{ article.content | safe }}
+        </div>
+        {% if article.author == request.user %}
+        {% endif %}
+            <div class="panel-footer">
+                <a class="btn btn-success" href="{% url 'article:edit' article.id %}">编辑文章</a>
+                <a class="btn btn-danger" href="{% url 'article:delete' article.id %}">删除文章</a>
+                {% if previous_article %}
+                    <a class="btn btn-primary" href="{% url 'article:read' previous_article.id %}">上一篇</a>
+                {% endif %}
+                {% if next_article %}
+                    <a class="btn btn-primary" href="{% url 'article:read' next_article.id %}">下一篇</a>
+                {% endif %}
+            </div>
+    </div>
+{% endblock %}
