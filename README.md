@@ -24,4 +24,4 @@
 
 # 4.管理员界面
 
-访问http://localhost:8000/admin，有管理员账号admin，密码1593574862.
+访问http://localhost:8000/admin，有管理员账号admin，密码s1593574862.
